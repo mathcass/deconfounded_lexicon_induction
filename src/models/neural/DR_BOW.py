@@ -9,7 +9,7 @@ from tensorflow.python.framework import function
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 from src.models.abstract_model import Model
-import tf_utils
+from . import tf_utils
 
 class DR_BOW:
 

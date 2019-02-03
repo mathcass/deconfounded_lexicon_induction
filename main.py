@@ -20,6 +20,7 @@ from src.data.dataset import Dataset
 import src.msc.constants as constants
 import src.msc.utils as utils
 import src.analysis.evaluator as evaluator
+import imp
 
 def process_command_line():
     """ returns a 1-tuple of cli args
@@ -51,9 +52,9 @@ def run_experiment(config, args):
         os.makedirs(config.working_dir)
     utils.write_config(config, os.path.join(config.working_dir, 'config.yaml'))
 
-    print 'MAIN: parsing dataset'
+    print('MAIN: parsing dataset')
     d = Dataset(config, config.working_dir)
-    print 'MAIN: dataset done. took %.2fs' % (time.time() - start)
+    print('MAIN: dataset done. took %.2fs' % (time.time() - start))
 
     if args.train:
         d.set_active_split(config.train_suffix)
@@ -62,7 +63,7 @@ def run_experiment(config, args):
             if model_description.get('skip', False):
                 continue
 
-            print 'MAIN: training ', model_description['name']
+            print('MAIN: training ', model_description['name'])
             start_time = time.time()
             model_dir = os.path.join(config.working_dir, model_description['name'])
             if not os.path.exists(model_dir):
@@ -74,8 +75,8 @@ def run_experiment(config, args):
 
             model.train(d, model_dir)
             model.save(model_dir)
-            print 'MAIN: training %s done, time %.2fs' % (
-                model_description['name'], time.time() - start_time)
+            print('MAIN: training %s done, time %.2fs' % (
+                model_description['name'], time.time() - start_time))
 
     # if test, switch the datset to test, 
     #  and run inference + evaluation for each model
@@ -87,7 +88,7 @@ def run_experiment(config, args):
             if model_description.get('skip', False):
                 continue
 
-            print 'MAIN: inference with ', model_description['name']
+            print('MAIN: inference with ', model_description['name'])
             start_time = time.time()
 
             model = constants.MODEL_CLASSES[model_description['type']](
@@ -117,8 +118,8 @@ def run_experiment(config, args):
                 'model_dir': model_dir,
             })
 
-            print 'MAIN: evaluation %s done, time %.2fs' % (
-                model_description['name'], time.time() - start_time)
+            print('MAIN: evaluation %s done, time %.2fs' % (
+                model_description['name'], time.time() - start_time))
 
         return results
 
@@ -160,9 +161,9 @@ def validate_data(config, args):
     if not os.path.exists(out_data_dir):
         os.makedirs(out_data_dir)
 
-    print 'MAIN: making splits...'
+    print('MAIN: making splits...')
     # makes fresh splits if not provided
-    print '\t shuffling...'
+    print('\t shuffling...')
     tmp_shuf_corpus = out_data_prefix
     validated_path = tmp_shuf_corpus + '.validated'
     if not os.path.exists(tmp_shuf_corpus):
@@ -170,7 +171,7 @@ def validate_data(config, args):
         os.system('paste %s | %s > %s' % (in_data_prefix, shuf, tmp_shuf_corpus))
     validate_rowfile(tmp_shuf_corpus, validated_path)
 
-    print '\t split:', config.train_suffix
+    print('\t split:', config.train_suffix)
     file_path = out_data_prefix + config.train_suffix
     validated_path = out_data_prefix + '.validated' + config.train_suffix
     if not os.path.exists(validated_path):
@@ -178,7 +179,7 @@ def validate_data(config, args):
             config.test_size + config.dev_size, tmp_shuf_corpus, file_path))
         validate_rowfile(file_path, validated_path)
 
-    print '\t split:', config.dev_suffix
+    print('\t split:', config.dev_suffix)
     file_path = out_data_prefix + config.dev_suffix
     validated_path = out_data_prefix + '.validated' + config.dev_suffix
     if not os.path.exists(validated_path):
@@ -186,7 +187,7 @@ def validate_data(config, args):
             config.dev_size, tmp_shuf_corpus, file_path))
         validate_rowfile(file_path, validated_path)
 
-    print '\t split:', config.test_suffix
+    print('\t split:', config.test_suffix)
     file_path = out_data_prefix + config.test_suffix
     validated_path = out_data_prefix + '.validated' + config.test_suffix
     if not os.path.exists(validated_path):
@@ -210,18 +211,18 @@ if __name__ == '__main__':
     config = utils.load_config(args.config)   
 
     # boilerplate
-    reload(sys)
-    sys.setdefaultencoding('utf8')
+    imp.reload(sys)
+    # sys.setdefaultencoding('utf8')
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
     if not os.path.exists(config.working_dir):
         os.makedirs(config.working_dir)
 
     # make splits data
-    print 'MAIN: validating data...'
+    print('MAIN: validating data...')
     start = time.time()
     config, skipped = validate_data(config, args)
-    print '\t done. Took %.2fs, found %d invalid rows' % (
-        time.time() - start, skipped)
+    print('\t done. Took %.2fs, found %d invalid rows' % (
+        time.time() - start, skipped))
  
     # boilerplate
     start = time.time()
@@ -232,7 +233,7 @@ if __name__ == '__main__':
     # run expt
     results = run_experiment(config, args)
     if args.test:
-        print 'MAIN: writing summary to ', summary_path
+        print('MAIN: writing summary to ', summary_path)
         for res in results:
             csv_writer.writerow(res.keys())
             csv_writer.writerow(res.values())

@@ -167,7 +167,7 @@ def get_glove(dataset, glove_dir=os.getcwd() + '/datasets/glove/glove.pkl'):
         return np.random.uniform(low=-epsilon, high=epsilon, size=(vec_size,))
 
     start = time.time()
-    print 'TF_UTILS: reading pickled glove vecs from', glove_dir
+    print('TF_UTILS: reading pickled glove vecs from', glove_dir)
     glove_vecs = utils.depickle(glove_dir)
 
     vec_len = len(glove_vecs['be'])
@@ -177,7 +177,7 @@ def get_glove(dataset, glove_dir=os.getcwd() + '/datasets/glove/glove.pkl'):
     for tok in dataset.ordered_features:
             embeddings.append(glove_vecs.get(tok) if tok in glove_vecs else xavier(vec_len, num_vecs))
     embeddings = np.array(embeddings)
-    print '\tdone. took %.2fs' % (time.time() - start)
+    print('\tdone. took %.2fs' % (time.time() - start))
     return embeddings
 
 

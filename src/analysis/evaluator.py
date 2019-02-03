@@ -7,7 +7,7 @@ from src.models.linear.plain_regression import RegularizedRegression
 from src.models.linear.fixed_regression import FixedRegression
 from src.models.linear.confound_regression import ConfoundRegression
 
-from correlations import cramers_v, pointwise_biserial
+from .correlations import cramers_v, pointwise_biserial
 import sklearn.metrics
 import os
 import time
@@ -67,9 +67,7 @@ def eval_performance(var, labels, regression_preds,
 
     elif var['type'] == 'categorical':
         # replace labels with their ids
-        labels = map(
-            lambda x: dataset.class_to_id_map[var['name']][x],
-            labels)
+        labels = [dataset.class_to_id_map[var['name']][x] for x in labels]
         reg_eval = eval_categorical(regression_preds, labels)
         fixed_eval = eval_categorical(fixed_preds, labels)
         confound_eval = eval_categorical(confound_preds, labels)
@@ -123,7 +121,7 @@ def evaluate(config, dataset, predictions, model_dir, features=None):
             key=lambda x: x[1])[::-1][:config.num_eval_features]
         features = [x[0] for x in features if x[0] in dataset.features]
 
-        print 'EVALUATOR: writing selected features + weights...'
+        print('EVALUATOR: writing selected features + weights...')
         s = ''
         for f in features:
             s += '%s\t%.4f\n' % (f, predictions.feature_importance[f])
@@ -134,15 +132,15 @@ def evaluate(config, dataset, predictions, model_dir, features=None):
         assert all([isinstance(x, str) for x in features])
 
     # use these selected features to train & test a new model
-    print 'EVALUATOR: running linear model with selected features'
+    print('EVALUATOR: running linear model with selected features')
     regression_predictions = run_model(
         config, dataset, features, RegularizedRegression)
 
-    print 'EVALUATOR: running fixed model with selected features'
+    print('EVALUATOR: running fixed model with selected features')
     fixed_predictions = run_model(
         config, dataset, features, FixedRegression)
 
-    print 'EVALUATOR: running confound model'
+    print('EVALUATOR: running confound model')
     confound_predictions = run_model(
         config, dataset, None, ConfoundRegression)
 
@@ -157,14 +155,14 @@ def evaluate(config, dataset, predictions, model_dir, features=None):
 
         if var['control']:
             start = time.time()
-            print 'EVALUATOR: computing %s correlation...' % var['name']
+            print('EVALUATOR: computing %s correlation...' % var['name'])
             correlations[var['name']] = feature_correlation(
                 var=var,
                 features=features,
                 input_text=dataset.get_tokenized_input(),
                 labels=labels,
                 dataset=dataset)
-            print '\t Done. took %.2fs' % (time.time() - start)
+            print('\t Done. took %.2fs' % (time.time() - start))
 
         else:
             regression_preds = regression_predictions.scores[var['name']]

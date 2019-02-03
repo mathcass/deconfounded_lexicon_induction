@@ -31,6 +31,7 @@ from src.models.neural.tf_wrapper import DRATTNWrapper
 from src.models.neural.tf_wrapper import DRBOWWrapper
 
 import src.msc.utils as utils
+import imp
 
 # These are the mappings from model names as specified in a config.yaml file
 # to the appropriate class for this model.
@@ -459,7 +460,7 @@ def main():
   config = utils.load_yaml_config(FLAGS.yaml_config)
 
   # Boilerplate.
-  reload(sys)
+  imp.reload(sys)
   sys.setdefaultencoding('utf8')
 
   if not os.path.exists(config.working_dir):

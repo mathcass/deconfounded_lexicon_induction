@@ -37,7 +37,7 @@ class Dataset(object):
             'text input must be first element of data spec!'
 
         # this is {train/val/test: {variable name: filepath with just that variable on each line}  }
-        print 'DATASET: making splits...'
+        print('DATASET: making splits...')
         self.data_files, self.split_sizes, self.whole_data_files = self._cut_data()
 
         # class_to_id_map: {variable name: {'class': index}  }  for each categorical variable
@@ -63,13 +63,13 @@ class Dataset(object):
         start = time.time()
         np_path = os.path.join(config.working_dir, 'np_data.npy')
         if not os.path.exists(np_path):
-            print 'DATASET: parsing data into np arrays...'
+            print('DATASET: parsing data into np arrays...')
             self.np_data = self._get_np_data()
             np.save(np_path, self.np_data)
         else:
-            print 'DATASET: restoring np_arrays from ', np_path
+            print('DATASET: restoring np_arrays from ', np_path)
             self.np_data = np.load(np_path)[()]
-        print '\tdone, took %.2fs' % (time.time() - start)
+        print('\tdone, took %.2fs' % (time.time() - start))
 
 
     def datafile_to_np(self, datafile, feature_id_map=None, text_file=False):
@@ -171,7 +171,7 @@ class Dataset(object):
         X_features = self.ordered_features
         if feature_subset is not None:
             assert len(feature_subset) > 0
-            retain_indices = map(lambda f: self.features[f], feature_subset)
+            retain_indices = [self.features[f] for f in feature_subset]
             X = X[:, retain_indices]
             X_features = feature_subset
         return X, X_features        
@@ -240,15 +240,15 @@ class Dataset(object):
     def _check_vocab(self, vocab_file):
         assert os.path.exists(vocab_file), "The vocab file %s does not exist" % vocab_file
 
-        lines = map(lambda x: x.strip(), open(vocab_file).readlines())
+        lines = [x.strip() for x in open(vocab_file).readlines()]
     
         if len(lines) != len(set(lines)):
-            print 'DATASET: vocab %s contains dups!! fixing.' % vocab_file
+            print('DATASET: vocab %s contains dups!! fixing.' % vocab_file)
             unk = self.config.unk
             os.system('rm %s' % vocab_file)
             s = unk + '\n' + '\n'.join([x for x in set(lines) if x != unk])
             with open(vocab_file, 'w') as f: f.write(s)
-            lines = map(lambda x: x.strip(), open(vocab_file).readlines())
+            lines = [x.strip() for x in open(vocab_file).readlines()]
 
         assert lines[0] == self.config.unk, \
             "The first words in %s is not %s" % (vocab_file)
@@ -259,15 +259,15 @@ class Dataset(object):
     def _gen_vocab(self, text_file):
         vocab_path = os.path.join(self.base_dir, 'freq_vocab.txt')
         if not os.path.exists(vocab_path):
-            print 'DATASET: generating vocab of %d tokens..' % self.config.vocab['top_n']
+            print('DATASET: generating vocab of %d tokens..' % self.config.vocab['top_n'])
             start = time.time()
             word_ctr = Counter(open(text_file).read().split())
-            vocab = map(lambda x: x[0], word_ctr.most_common(self.config.vocab['top_n']))
+            vocab = [x[0] for x in word_ctr.most_common(self.config.vocab['top_n'])]
             with open(vocab_path, 'w') as f:
                 f.write('\n'.join(vocab))
-            print '\tdone. took %.fs' % (time.time() - start)
+            print('\tdone. took %.fs' % (time.time() - start))
         else:
-            print 'DATASET: restoring vocab from ', vocab_path
+            print('DATASET: restoring vocab from ', vocab_path)
             vocab = [x.strip() for x in open(vocab_path).readlines()][1:] # unk is 0th elem
 
         if self.config.vocab['preselection_algo'] == 'identity':
@@ -277,27 +277,27 @@ class Dataset(object):
             out_path = os.path.join(self.base_dir, 'or_vocab.txt')
             if not os.path.exists(out_path):
                 start = time.time()
-                print 'ODDS_RATIO: selecting initial featureset'
+                print('ODDS_RATIO: selecting initial featureset')
                 vocab = odds_ratio.select_features(
                     dataset=self, 
                     vocab=vocab, 
                     k=self.config.vocab['preselection_features'])
-                print '\n\tdone. Took %.2fs' % (time.time() - start)
+                print('\n\tdone. Took %.2fs' % (time.time() - start))
             else:
-                print 'ODDS_RATIO: recoveing from ', out_path
+                print('ODDS_RATIO: recoveing from ', out_path)
                 vocab = [x.strip() for x in open(out_path).readlines()]
 
         elif self.config.vocab['preselection_algo'] == 'mutual-information':
             out_path = os.path.join(self.base_dir, 'mi_vocab.txt')
             if not os.path.exists(out_path):
                 start = time.time()
-                print 'MUTUAL_INFORMATION: selecting initial featureset'
+                print('MUTUAL_INFORMATION: selecting initial featureset')
                 vocab = mutual_information.select_features(
                     dataset=self, 
                     vocab=vocab, 
                     k=self.config.vocab['preselection_features'])
-                print 'MUTUAL_INFORMATION: recoveing from ', out_path
-                print '\n\tdone. Took %.2fs' % (time.time() - start)
+                print('MUTUAL_INFORMATION: recoveing from ', out_path)
+                print('\n\tdone. Took %.2fs' % (time.time() - start))
             else:
                 vocab = [x.strip() for x in open(out_path).readlines()]
 

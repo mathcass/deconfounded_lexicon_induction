@@ -67,7 +67,7 @@ def compute_mi(dataset, target_name, vocab, level=None):
                       (n00/n) * math.log((n * n00) / (n0_ * n_0))        
         return mutual_info
 
-    MIs = dict(map(lambda (f, d): (f, mi(**d)), feature_counts.items()))
+    MIs = dict(list(map(lambda f, d: (f, mi(**d)), feature_counts.items())))
     return MIs
 
 def select_features(dataset, vocab, k):
@@ -94,7 +94,7 @@ def select_features(dataset, vocab, k):
             feature_ratios[f].append(x)
 
     feature_importance = sorted(
-        map(lambda (f, x): (np.mean(x), f), feature_ratios.items()))
+        map(lambda f, x: (np.mean(x), f), feature_ratios.items()))
 
     # write this to output
     with open(os.path.join(dataset.config.working_dir, 'mutual-information-scores-before-selection.txt'), 'w') as f:
@@ -103,7 +103,7 @@ def select_features(dataset, vocab, k):
 
     # choose K features with smallest MI
     selected_features = feature_importance[:k]
-    selected_features = map(lambda (x, f): f, selected_features)
+    selected_features = list(map(lambda x, f: f, selected_features))
     return selected_features
 
 

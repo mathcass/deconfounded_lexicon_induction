@@ -12,7 +12,10 @@ The project website is [here](https://nlp.stanford.edu/projects/deconfounded-lex
 
 ## Usage
 
-`python main.py --config sample_config.json [--train] [--test]`
+`python main.py --config sample_config.yaml [--train] [--test]`
 
-Logs, models, features, and summary files will be written in the config's `working_dir`. See `sample_config.json` for an example config and explanation. 
+Logs, models, features, and summary files will be written in the config's `working_dir`. See `sample_config.yaml` for an example config and explanation. 
 
+## Python 3 Port
+
+This code has been run through a process to convert it from Python 2 to Python 3.

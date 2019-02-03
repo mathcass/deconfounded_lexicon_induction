@@ -11,7 +11,6 @@ import numpy as np
 from src.models.abstract_model import Model
 import src.models.neural.tf_utils as tf_utils
 import src.msc.utils as utils
-import tf_utils
 
 # # # # global gradient reversal functions  # # # #
 def reverse_grad_grad(op, grad):

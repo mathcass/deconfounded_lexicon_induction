@@ -32,7 +32,7 @@ class TFModelWrapper(Model):
             self.sess,
             os.path.join(model_dir, 'model.ckpt'),
             global_step=self.global_step)
-        print 'TF WRAPPER: saved into ', model_dir
+        print('TF WRAPPER: saved into ', model_dir)
 
 
     def load(self, dataset, model_dir):
@@ -59,19 +59,19 @@ class TFModelWrapper(Model):
                 start_time = time.time()
                 model.model.saver.restore(sess, latest_ckpt)
                 sess.run(tf.tables_initializer())
-                print "INFO: loaded model parameters from %s, time %.2fs" % \
-                    (latest_ckpt, time.time() - start_time)
+                print("INFO: loaded model parameters from %s, time %.2fs" % \
+                    (latest_ckpt, time.time() - start_time))
             else:
                 start_time = time.time()
                 sess.run(tf.global_variables_initializer())
                 sess.run(tf.tables_initializer())
-                print "INFO: created model with fresh parameters, time %.2fs" % \
-                                (time.time() - start_time)
+                print("INFO: created model with fresh parameters, time %.2fs" % \
+                                (time.time() - start_time))
 
-        print "INFO: trainable variables:"
+        print("INFO: trainable variables:")
         values = sess.run(model.model.trainable_variable_names)
         for name, value in zip(model.model.trainable_variable_names, values):
-            print '\t%s   ----    Shape: %s' %  (name, value.shape)
+            print('\t%s   ----    Shape: %s' %  (name, value.shape))
 
         global_step = model.model.global_step.eval(session=sess)
         return model, global_step, sess      

@@ -50,16 +50,16 @@ class Regression(Model):
 
         models_file = os.path.join(model_dir, 'models')
         utils.pickle(self.models, models_file)
-        print 'REGRESSION: models saved into ', models_file
+        print('REGRESSION: models saved into ', models_file)
 
 
     def load(self, dataset, model_dir):
         start = time.time()
         self.models = utils.depickle(os.path.join(model_dir, 'models'))
-        target_names = map(lambda x: x['name'], self.targets)
+        target_names = [x['name'] for x in self.targets]
         assert set(target_names) == set(self.models.keys())
-        print 'REGRESSION: loaded model parameters from %s, time %.2fs' % (
-            model_dir, time.time() - start)
+        print('REGRESSION: loaded model parameters from %s, time %.2fs' % (
+            model_dir, time.time() - start))
 
 
     def _summarize_model_weights(self):

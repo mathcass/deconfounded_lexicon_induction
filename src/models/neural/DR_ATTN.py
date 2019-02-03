@@ -14,7 +14,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import src.msc.utils as utils
 
 from src.models.abstract_model import Model
-import tf_utils
+from . import tf_utils
 
 class DR_ATTN:
     """ DR+ATTN """

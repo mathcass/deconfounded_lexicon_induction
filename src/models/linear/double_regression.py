@@ -6,8 +6,8 @@ g(T) => residual
 
 import sys
 sys.path.append('../..')
-import regression_base
-import plain_regression
+from . import regression_base
+from . import plain_regression
 
 from collections import defaultdict, namedtuple
 from src.models.abstract_model import Model, Prediction
@@ -97,15 +97,15 @@ class DoubleRegression(plain_regression.RegularizedRegression):
 
     def train(self, dataset, model_dir):
         # first train a model using the confounds only
-        print "DOUBLE REGRESSION: first pass using confounds..."
+        print("DOUBLE REGRESSION: first pass using confounds...")
         f = self.train_model(dataset)
         self.models = f
         start = time.time()
 
         # then get the residuals
-        print "DOUBLE REGRESSION: inference for residuals..."
+        print("DOUBLE REGRESSION: inference for residuals...")
         preds = self.inference(dataset, model_dir).scores
-        print "\tDone. Took %.2fs" % (time.time() - start)
+        print("\tDone. Took %.2fs" % (time.time() - start))
         self.residuals = {}
         for i, target in enumerate(self.targets):
             y_hat = preds[target['name']]
@@ -113,7 +113,7 @@ class DoubleRegression(plain_regression.RegularizedRegression):
             self.residuals[target['name']] = y - y_hat
 
         # now predict the residuals using the text
-        print "DOUBLE REGRESSION: 2nd pass using text and residuals..."
+        print("DOUBLE REGRESSION: 2nd pass using text and residuals...")
         g = self.train_model(dataset)
         self.models = g
 

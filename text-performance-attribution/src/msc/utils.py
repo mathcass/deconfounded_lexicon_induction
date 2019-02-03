@@ -4,7 +4,7 @@ from __future__ import division
 from __future__ import print_function
 
 from collections import namedtuple
-import cPickle
+import _pickle as cPickle
 import getpass
 import numpy as np
 import yaml

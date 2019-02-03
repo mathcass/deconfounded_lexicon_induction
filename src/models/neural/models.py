@@ -4,10 +4,10 @@ base model graph all others build off of
 import tensorflow as tf
 from tensorflow.python.framework import function
 from tensorflow.contrib.rnn.python.ops import rnn
-from graph_module import GraphModule
+from .graph_module import GraphModule
 import numpy as np
-import encoders
-import attention
+from . import encoders
+from . import attention
 import os
 
 
@@ -174,12 +174,12 @@ class Model:
             ckpt = tf.train.get_checkpoint_state(dir)
             if ckpt and ckpt.model_checkpoint_path:
                 self.saver.restore(self.sess, ckpt.model_checkpoint_path)
-                print 'INFO: success! model restored from %s' % ckpt.model_checkpoint_path
+                print('INFO: success! model restored from %s' % ckpt.model_checkpoint_path)
             else:
                 raise Exception("ERROR: No checkpoint found at ", dir)
         elif filepath is not None:
             self.saver.restore(self.sess, filepath)
-            print 'INFO: success! model restored from ', filepath
+            print('INFO: success! model restored from ', filepath)
         else:
             raise Exception('ERROR: must provide a checkpoint filepath or directory')
 

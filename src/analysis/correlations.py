@@ -64,7 +64,7 @@ def pointwise_biserial(feature, text, targets):
 
     rpb = (abs(m1 - m0) / s) * np.sqrt((n0 * n1) / (n ** 2))
     if type(rpb) == type(0.0):
-        print 'here'
+        print('here')
         return None
     return rpb
 

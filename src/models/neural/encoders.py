@@ -1,6 +1,6 @@
 import tensorflow as tf
 from collections import namedtuple
-from graph_module import GraphModule
+from .graph_module import GraphModule
 from tensorflow.contrib.rnn.python.ops import rnn
 
 

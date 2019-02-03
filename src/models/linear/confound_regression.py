@@ -1,6 +1,6 @@
 
-import regression_base
-import plain_regression
+from . import regression_base
+from . import plain_regression
 from functools import partial
 
 import sklearn

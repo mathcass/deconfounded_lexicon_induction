@@ -1,5 +1,5 @@
 
-import regression_base
+from . import regression_base
 from functools import partial
 
 import sklearn
@@ -57,7 +57,7 @@ class RegularizedRegression(regression_base.Regression):
             batch_size=self.params['batch_size'],
             level=level)
 
-        print 'REGRESSION: fitting target %s' % target['name']
+        print('REGRESSION: fitting target %s' % target['name'])
         model = sklearn.linear_model.SGDRegressor(
             penalty=self.regularizor or 'none',
             alpha=self.lmbda,
@@ -82,7 +82,7 @@ class RegularizedRegression(regression_base.Regression):
             level=level,
             batch_size=self.params['batch_size'])
 
-        print 'CLASSIFICATION: fitting target %s, level %s' % (target['name'], level)
+        print('CLASSIFICATION: fitting target %s, level %s' % (target['name'], level))
         model = sklearn.linear_model.SGDClassifier(
             loss='log',
             penalty=(self.regularizor or 'none'),
